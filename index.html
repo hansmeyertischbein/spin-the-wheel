@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Snurr hjulet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="wheel.css">
+</head>
+<body>
+  <main class="stage">
+    <h1>Snurr hjulet</h1>
+    <div class="wheel-wrap">
+      <div class="pointer" aria-hidden="true"></div>
+      <svg id="wheel" class="wheel" viewBox="-210 -210 420 420" role="img" aria-label="Premiehjul"></svg>
+      <button id="hub" class="hub" type="button" aria-label="Snurr hjulet">Snurr</button>
+    </div>
+    <p class="hint">Trykk på hjulet eller mellomromstasten</p>
+  </main>
+
+  <div id="result" class="result" hidden>
+    <div class="card" role="dialog" aria-live="assertive" aria-labelledby="prize">
+      <p class="kicker">Du vant</p>
+      <p class="prize" id="prize"></p>
+      <button id="again" class="again" type="button">Snurr igjen</button>
+    </div>
+  </div>
+  <canvas id="confetti" class="confetti" aria-hidden="true"></canvas>
+
+  <script src="wheel.js"></script>
+</body>
+</html>
