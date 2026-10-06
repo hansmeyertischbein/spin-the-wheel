@@ -18,7 +18,12 @@ const SLICES = [
   'Ski- og stavholder', 'Red Bull', 'JBL lydplanke', 'Klesrulle', 'Tannbørste',
   'Ski- og stavholder', 'Liten JBL', 'Red Bull', 'Klesrulle', 'Tannbørste',
 ];
-const COLORS = [['#1F3A68', '#FFFFFF'], ['#F2B84B', '#0E1A33'], ['#D6E4F7', '#0E1A33']];
+// Big prizes in green, the rest alternating black and white
+const GREEN = ['Kaffemaskin', 'JBL lydplanke', 'Liten JBL'];
+const COLORS = (() => {
+  let k = 0;
+  return SLICES.map(name => GREEN.includes(name) ? ['#1E8E4E', '#FFFFFF'] : (k++ % 2 ? ['#FFFFFF', '#111111'] : ['#111111', '#FFFFFF']));
+})();
 
 /* ---------- Drawing ---------- */
 const svgNS = 'http://www.w3.org/2000/svg';
@@ -37,12 +42,12 @@ function el(tag, attrs, parent) {
 }
 
 function draw() {
-  el('circle', { r: R + 8, fill: '#FFFFFF' }, wheel);
+  el('circle', { r: R + 8, fill: '#111111' }, wheel);
   SLICES.forEach((name, i) => {
-    const [bg, fg] = COLORS[i % 3];
+    const [bg, fg] = COLORS[i];
     const a0 = i * STEP, a1 = a0 + STEP;
     const [x0, y0] = polar(R, a0), [x1, y1] = polar(R, a1);
-    el('path', { d: `M0 0 L${x0} ${y0} A${R} ${R} 0 0 1 ${x1} ${y1} Z`, fill: bg }, wheel);
+    el('path', { d: `M0 0 L${x0} ${y0} A${R} ${R} 0 0 1 ${x1} ${y1} Z`, fill: bg, stroke: '#111111', 'stroke-width': 1 }, wheel);
     const mid = a0 + STEP / 2;
     const g = el('g', { transform: `rotate(${mid - 90})` }, wheel);
     const size = name.length > 14 ? 11 : name.length > 10 ? 13 : 15;
@@ -52,7 +57,7 @@ function draw() {
   // Lights around the rim
   for (let i = 0; i < N * 2; i++) {
     const [x, y] = polar(R + 4, i * STEP / 2);
-    el('circle', { cx: x, cy: y, r: 3, fill: i % 2 ? '#F2B84B' : '#FFFFFF', stroke: '#0E1A33', 'stroke-width': 0.6 }, wheel);
+    el('circle', { cx: x, cy: y, r: 3, fill: i % 2 ? '#F2B84B' : '#FFFFFF', stroke: '#111111', 'stroke-width': 0.6 }, wheel);
   }
 }
 
@@ -120,7 +125,7 @@ function confetti(count) {
   const dpr = window.devicePixelRatio || 1;
   canvas.width = innerWidth * dpr; canvas.height = innerHeight * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const colors = ['#F2B84B', '#FFFFFF', '#D6E4F7', '#1F3A68'];
+  const colors = ['#1E8E4E', '#FFFFFF', '#111111', '#F2B84B'];
   for (let i = 0; i < count; i++) {
     pieces.push({
       x: innerWidth / 2, y: innerHeight * 0.45, vx: (Math.random() - 0.5) * 16, vy: -Math.random() * 16 - 4,
