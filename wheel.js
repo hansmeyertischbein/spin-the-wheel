@@ -74,6 +74,29 @@ function pickPrize() {
   return COMMON[COMMON.length - 1];
 }
 
+/* ---------- Where to stop ----------
+   The prize is already decided above, so this only changes where on the wheel
+   the pointer stops, never what is won. For small prizes, the wheel usually
+   stops on a slice next to a green one, close to the border. */
+const NEAR_MISS = 0.7;   // share of small-prize spins that stop right next to a big prize
+const isGreen = i => GREEN.includes(SLICES[(i + N) % N]);
+
+function landingAngle(prize) {
+  const options = SLICES.map((s, i) => (s === prize ? i : -1)).filter(i => i >= 0);
+  if (!GREEN.includes(prize) && random() < NEAR_MISS) {
+    const near = options.filter(i => isGreen(i - 1) || isGreen(i + 1));
+    if (near.length) {
+      const i = near[Math.floor(random() * near.length)];
+      const sides = [isGreen(i - 1) ? -1 : 0, isGreen(i + 1) ? 1 : 0].filter(Boolean);
+      const side = sides[Math.floor(random() * sides.length)];
+      const inset = STEP * (0.06 + random() * 0.16);   // clearly inside the slice, but close to the edge
+      return side < 0 ? i * STEP + inset : (i + 1) * STEP - inset;
+    }
+  }
+  const i = options[Math.floor(random() * options.length)];
+  return i * STEP + STEP / 2 + (random() - 0.5) * STEP * 0.7;
+}
+
 /* ---------- Spinning ---------- */
 const hub = document.getElementById('hub');
 const result = document.getElementById('result');
@@ -85,9 +108,7 @@ function spin() {
   result.hidden = true;
 
   const prize = pickPrize();
-  const options = SLICES.map((s, i) => (s === prize ? i : -1)).filter(i => i >= 0);
-  const slice = options[Math.floor(random() * options.length)];
-  const target = slice * STEP + STEP / 2 + (random() - 0.5) * STEP * 0.7;   // angle on the wheel to stop under the pointer
+  const target = landingAngle(prize);   // angle on the wheel to stop under the pointer
   const delta = ((-target - rotation) % 360 + 360) % 360;
   rotation += 360 * 6 + delta;
 
